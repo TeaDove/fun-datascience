@@ -5,7 +5,7 @@ from schemas.plot import Bar, Graph, Points, TimeSeries
 from service.plot_service import PlotService
 from starlette.responses import StreamingResponse
 
-app = FastAPI()
+app = FastAPI(title="Fun Data Science!!!")
 service = PlotService()
 
 
