@@ -121,25 +121,28 @@ class PlotService:
         fig, ax = self._get_fig_and_ax(input_)
 
         # make table
-        table: list[tuple[str, int, float]] = []
-        for legend, values in input_.values.items():
-            row: list[tuple[str, int, float]] = []
-            for date, value in values.items():
-                row.append((legend, date, value))
-            table.extend(row)
+        # table: list[tuple[str, int, float]] = []
+        # for legend, values in input_.values.items():
+        #     row: list[tuple[str, int, float]] = []
+        #     for key, value in values.items():
+        #         row.append((legend, key, value))
+        #     table.extend(row)
 
-        df = pd.DataFrame(table, columns=["legend", "date", "value"])
-        df = df.drop_duplicates(subset=["legend", "date", "value"])
-        df_wide = df.pivot_table(
-            index="date", columns="legend", values="value", aggfunc="sum"
-        )
+        df = pd.DataFrame(input_.values, columns=["legend", "key", "value"])
+        # df = df.drop_duplicates(subset=["legend", "key", "value"])
+        # df_wide = df.pivot_table(
+        #     index="key", columns="legend", values="value", aggfunc="sum"
+        # )
 
         sns.lineplot(
-            data=df_wide,
+            data=df,
             ax=ax,
-            palette=self._get_palette(len(input_.values)),
-            marker="o",
-            linestyle=(0, (1, 10)),
+            palette=self._get_palette(len({value[0] for value in input_.values})),
+            # marker="o",
+            # linestyle=(0, (1, 10)),
+            x="key",
+            y="value",
+            hue="legend",
         )
 
         return self._fig_to_bytes(input_, fig)

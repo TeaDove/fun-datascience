@@ -1,4 +1,5 @@
 import enum
+import numbers
 import uuid
 from datetime import datetime
 
@@ -106,11 +107,15 @@ class TimeSeries(Plot):
 
 
 class LinePlot(Plot):
-    values: dict[str, dict[int, float]] = Field(
-        example={
-            random.choice(_random_names): {i: random.randint(0, 100) for i in range(20)}
-            for _ in range(5)
-        }
+    values: list[tuple[str, float, float]] = Field(
+        example=[
+            (
+                random.choice(_random_names[:4]),
+                random.randint(0, 100),
+                random.randint(0, 10),
+            )
+            for _ in range(100)
+        ]
     )
 
 
