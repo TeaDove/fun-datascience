@@ -1,7 +1,7 @@
 import time
 
 from fastapi import FastAPI, Request
-from schemas.plot import Bar, Graph, Points, TimeSeries
+from schemas.plot import Bar, Graph, LinePlot, Points, TimeSeries
 from service.plot_service import PlotService
 from starlette.responses import StreamingResponse
 
@@ -31,6 +31,11 @@ def draw_fig(points: Points) -> StreamingResponse:
 @app.post("/histogram", response_class=StreamingResponse)
 def draw_bar(input_: Bar) -> StreamingResponse:
     return StreamingResponse(service.draw_bar(input_), media_type="image/jpeg")
+
+
+@app.post("/lineplot", response_class=StreamingResponse)
+def draw_lineplot(input_: LinePlot) -> StreamingResponse:
+    return StreamingResponse(service.draw_lineplot(input_), media_type="image/jpeg")
 
 
 @app.post("/timeseries", response_class=StreamingResponse)

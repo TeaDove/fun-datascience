@@ -12,7 +12,16 @@ import seaborn as sns
 from fastapi.encoders import jsonable_encoder
 from matplotlib.lines import Line2D
 from networkx.drawing.nx_pydot import graphviz_layout
-from schemas.plot import Bar, Graph, GraphEdge, GraphLayout, Plot, Points, TimeSeries
+from schemas.plot import (
+    Bar,
+    Graph,
+    GraphEdge,
+    GraphLayout,
+    LinePlot,
+    Plot,
+    Points,
+    TimeSeries,
+)
 
 X, Y = "x", "y"
 
@@ -105,6 +114,33 @@ class PlotService:
                 xytext=(0, 10),
                 textcoords="offset points",
             )
+
+        return self._fig_to_bytes(input_, fig)
+
+    def draw_lineplot(self, input_: LinePlot) -> BytesIO:
+        fig, ax = self._get_fig_and_ax(input_)
+
+        # make table
+        table: list[tuple[str, int, float]] = []
+        for legend, values in input_.values.items():
+            row: list[tuple[str, int, float]] = []
+            for date, value in values.items():
+                row.append((legend, date, value))
+            table.extend(row)
+
+        df = pd.DataFrame(table, columns=["legend", "date", "value"])
+        df = df.drop_duplicates(subset=["legend", "date", "value"])
+        df_wide = df.pivot_table(
+            index="date", columns="legend", values="value", aggfunc="sum"
+        )
+
+        sns.lineplot(
+            data=df_wide,
+            ax=ax,
+            palette=self._get_palette(len(input_.values)),
+            marker="o",
+            linestyle=(0, (1, 10)),
+        )
 
         return self._fig_to_bytes(input_, fig)
 

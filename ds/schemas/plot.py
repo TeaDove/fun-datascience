@@ -105,6 +105,15 @@ class TimeSeries(Plot):
     only_time: bool = False
 
 
+class LinePlot(Plot):
+    values: dict[str, dict[int, float]] = Field(
+        example={
+            random.choice(_random_names): {i: random.randint(0, 100) for i in range(20)}
+            for _ in range(5)
+        }
+    )
+
+
 class GraphEdge(BaseModel):
     first: str
     second: str
