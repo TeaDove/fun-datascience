@@ -4,7 +4,8 @@ import uuid
 from datetime import datetime
 
 from numpy import random
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
+from typing_extensions import Annotated
 
 colors = ("RED", "BLUE", "GREEN")
 _random_names = [
@@ -53,8 +54,20 @@ class Plot(BaseModel):
     title: str | None = None
     ylabel: str | None = None
     xlabel: str | None = None
-    figsize: tuple[int, int] = (20, 13)
+
+    x_figsize: float = 20
+    figsize: Annotated[tuple[float, float] | None, Field(validate_default=True)] = None
+
     image_format: str = "jpeg"
+    label_font_size: int = 24
+
+    @field_validator("figsize", mode="before")
+    @classmethod
+    def set_figsize(cls, v: tuple[float, float] | None, values) -> tuple[float, float]:
+        if v is not None:
+            return v
+
+        return values.data["x_figsize"], values.data["x_figsize"] * 9 / 16
 
 
 class Point(BaseModel):

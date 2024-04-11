@@ -2,7 +2,6 @@
 
 BUILD_VERSION ?= $(shell cat VERSION)
 DOCKER_IMAGE ?= ghcr.io/teadove/fun-datascience:$(BUILD_VERSION)
-PYTHON ?= .venv/bin/python
 PYTHON_PRE ?= ../.venv/bin/python
 
 install:

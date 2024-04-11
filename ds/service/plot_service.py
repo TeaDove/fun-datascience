@@ -30,17 +30,32 @@ X, Y = "x", "y"
 class PlotService:
     def __post_init__(self) -> None:
         matplotlib.use("agg")
-        sns.set_theme(style="whitegrid")
+        sns.set_theme(style="whitegrid", font_scale=2)
 
     def _get_palette(self, n: int):
         return sns.color_palette("Set2", n)
 
-    def _fig_to_bytes(self, input_: Plot, fig) -> BytesIO:
+    def save_img(self, input_: Plot, buf: BytesIO) -> None:
+        title = input_.title
+        if title is None:
+            title = "img"
+        title = title.replace(" ", "_")
+
+        with open(f"{title}.{input_.image_format}", "wb") as f:
+            f.write(buf.read())
+
+    def _fig_to_bytes(self, input_: Plot, fig, ax) -> BytesIO:
+        if ax.get_legend() is not None:
+            plt.setp(ax.get_legend().get_texts(), fontsize=input_.label_font_size)
+            plt.setp(ax.get_legend().get_title(), fontsize=input_.label_font_size)
+
         buf = BytesIO()
         fig.savefig(
             buf,
             format=input_.image_format,
             dpi=300,
+            bbox_inches="tight",
+            pad_inches=0.3,
         )
         buf.seek(0)
         plt.close(fig)
@@ -52,11 +67,11 @@ class PlotService:
         ax = fig.gca()
 
         if input_.title is not None:
-            ax.set_title(input_.title)
+            ax.set_title(input_.title, fontsize=input_.label_font_size)
         if input_.ylabel is not None:
-            ax.set_ylabel(input_.ylabel)
+            ax.set_ylabel(input_.ylabel, fontsize=input_.label_font_size)
         if input_.xlabel is not None:
-            ax.set_xlabel(input_.xlabel)
+            ax.set_xlabel(input_.xlabel, fontsize=input_.label_font_size)
 
         return fig, ax
 
@@ -64,8 +79,7 @@ class PlotService:
         points_list = [jsonable_encoder(item, by_alias=True) for item in points.points]
 
         df = pd.DataFrame(points_list)
-        fig = plt.figure(figsize=points.figsize)
-        ax = fig.gca()
+        fig, ax = self._get_fig_and_ax(points)
 
         for color in df["color"].unique():
             colored_df = df[df["color"] == color]
@@ -81,7 +95,7 @@ class PlotService:
                 fig=fig,
             )
 
-        return self._fig_to_bytes(points, fig)
+        return self._fig_to_bytes(points, fig, ax)
 
     def draw_bar(self, input_: Bar) -> BytesIO:
         fig, ax = self._get_fig_and_ax(input_)
@@ -115,7 +129,7 @@ class PlotService:
                 textcoords="offset points",
             )
 
-        return self._fig_to_bytes(input_, fig)
+        return self._fig_to_bytes(input_, fig, ax)
 
     def draw_lineplot(self, input_: LinePlot) -> BytesIO:
         fig, ax = self._get_fig_and_ax(input_)
@@ -145,7 +159,7 @@ class PlotService:
             hue="legend",
         )
 
-        return self._fig_to_bytes(input_, fig)
+        return self._fig_to_bytes(input_, fig, ax)
 
     def draw_timeseries(self, input_: TimeSeries) -> BytesIO:
         fig, ax = self._get_fig_and_ax(input_)
@@ -176,7 +190,7 @@ class PlotService:
             ax.xaxis.set_major_locator(mdates.HourLocator(interval=1))
             ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
 
-        return self._fig_to_bytes(input_, fig)
+        return self._fig_to_bytes(input_, fig, ax)
 
     def concat_graph(self, input_: Graph) -> None:
         one_to_other: dict[str, dict[str, float]] = {}
@@ -231,7 +245,7 @@ class PlotService:
         if input_.xlabel is not None:
             plot.set_xlabel(input_.xlabel)
 
-        return self._fig_to_bytes(input_, fig)
+        return self._fig_to_bytes(input_, fig, ax)
 
     def _prepare_graph(self, input_: Graph) -> None:
         for edge in input_.edges:
@@ -371,4 +385,4 @@ class PlotService:
             labels = ["<30%", "30%-70%", ">70%"]
             ax.legend(proxies, labels)
 
-        return self._fig_to_bytes(input_, fig)
+        return self._fig_to_bytes(input_, fig, ax)

@@ -1,8 +1,7 @@
 ds/weights.pth
 bootstrap*
 ### Builds ###
-fun-telegram-v*
-fun-telegram
+ds/.test*
 
 data/
 !data/.gitkeep

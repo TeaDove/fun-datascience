@@ -1,12 +1,11 @@
 import time
 
 from fastapi import FastAPI, Request
+from presentation.dependencies import service
 from schemas.plot import Bar, Graph, LinePlot, Points, TimeSeries
-from service.plot_service import PlotService
 from starlette.responses import StreamingResponse
 
 app = FastAPI(title="Fun Data Science!!!")
-service = PlotService()
 
 
 @app.middleware("http")
