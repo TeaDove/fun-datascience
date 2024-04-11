@@ -30,7 +30,7 @@ X, Y = "x", "y"
 class PlotService:
     def __post_init__(self) -> None:
         matplotlib.use("agg")
-        sns.set_theme(style="whitegrid", font_scale=2)
+        sns.set_theme(style="whitegrid")
 
     def _get_palette(self, n: int):
         return sns.color_palette("Set2", n)

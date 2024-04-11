@@ -18,7 +18,7 @@ run-dev:
 docker-login:
 	docker login ghcr.io
 
-docker-buildx-ds: docker-login
+docker-buildx: docker-login
 	docker buildx build --platform linux/arm64,linux/amd64 -f=Dockerfile . --tag $(DOCKER_IMAGE) --push
 
 update:
