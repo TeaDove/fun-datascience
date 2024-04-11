@@ -8,10 +8,10 @@ ENV PYTHONFAULTHANDLER=1 \
     PIP_DEFAULT_TIMEOUT=100 \
     POETRY_VERSION=1.0.0
 
-RUN rm -rf /var/lib/apt/lists/*
-RUN apt-get update
-RUN apt-get install -y gcc python3-dev curl graphviz graphviz-dev
-RUN rm -rf /var/lib/apt/lists/*
+RUN rm -rf /var/lib/apt/lists/* \
+    && apt-get update \
+    && apt-get install -y gcc python3-dev curl graphviz graphviz-dev \
+    && rm -rf /var/lib/apt/lists/*
 RUN pip install "poetry==1.3.2"
 
 COPY ./ds/pyproject.toml ./
