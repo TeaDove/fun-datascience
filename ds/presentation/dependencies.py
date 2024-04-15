@@ -1,3 +1,3 @@
-from service.plot_service import PlotService
+from shared.container import init_combat_container
 
-service = PlotService()
+container = init_combat_container()
