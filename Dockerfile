@@ -12,7 +12,7 @@ RUN rm -rf /var/lib/apt/lists/* \
     && apt-get update \
     && apt-get install -y gcc python3-dev curl graphviz graphviz-dev \
     && rm -rf /var/lib/apt/lists/*
-RUN pip install "poetry==1.3.2"
+RUN pip install "poetry==1.8.2"
 
 COPY ./ds/pyproject.toml ./
 
