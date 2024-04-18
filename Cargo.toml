@@ -1,0 +1,11 @@
+[package]
+name = "fun_datascience"
+version = "0.0.0"
+edition = "2021"
+
+[[bin]]
+name = "web"
+path = "src/entrypoint_web.rs"
+
+[dependencies]
+rocket = "0.5.0"
