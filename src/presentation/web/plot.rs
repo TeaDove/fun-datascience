@@ -1,4 +1,4 @@
-use crate::service::plot_schemas::Bar;
+use crate::service::plot_schemas::BarInput;
 use crate::shared::container::Container;
 use rocket::http::Status;
 use rocket::post;
@@ -9,7 +9,7 @@ use rocket::serde::json::Json;
 #[post("/histogram", format = "json", data = "<input>")]
 pub fn draw_histogram(
     container: &rocket::State<Container>,
-    input: Json<Bar>,
+    input: Json<BarInput>,
 ) -> Result<RawHtml<String>, status::Custom<String>> {
     match container.plot_service.draw_bar(input.0) {
         Ok(v) => Ok(RawHtml(v)),

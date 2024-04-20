@@ -1,4 +1,4 @@
-use crate::service::plot_schemas::{Bar, Plot};
+use crate::service::plot_schemas::{BarInput, PlotInput};
 use crate::shared::container::Container;
 use rand::seq::SliceRandom;
 use rand::Rng;
@@ -75,15 +75,15 @@ pub fn test_plot_service_draw_bar_ok(combat_container: Container, names: Vec<Str
 
     let html = combat_container
         .plot_service
-        .draw_bar(Bar {
-            plot: Plot {
+        .draw_bar(BarInput {
+            plot: PlotInput {
                 title: Some("TITLE".to_string()),
                 x_title: Some("X_TITLE".to_string()),
                 y_title: Some("Y_TITLE".to_string()),
             },
             values: values,
             limit: Some(10),
-            asc: Some(true),
+            asc: Some(false),
         })
         .unwrap();
 
