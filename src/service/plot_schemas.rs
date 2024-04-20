@@ -6,6 +6,7 @@ pub struct PlotInput {
     pub title: Option<String>,
     pub x_title: Option<String>,
     pub y_title: Option<String>,
+    pub zoom_end_value: Option<u32>,
 }
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct BarInput {
@@ -13,6 +14,27 @@ pub struct BarInput {
     pub plot: PlotInput,
 
     pub values: HashMap<String, f64>,
-    pub limit: Option<usize>,
     pub asc: Option<bool>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct LineInput {
+    #[serde(flatten)]
+    pub plot: PlotInput,
+
+    pub values: Vec<(String, String, f64)>,
+}
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct EdgeInput {
+    pub first: String,
+    pub second: String,
+    pub weight: f64,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GraphInput {
+    #[serde(flatten)]
+    pub plot: PlotInput,
+
+    pub values: Vec<EdgeInput>,
 }

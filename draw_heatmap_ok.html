@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>BAR</title>
+    <title>HEATMAP</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts-gl@2.0.9/dist/echarts-gl.min.js"></script>
     <style> .container { display: flex; justify-content: center; align-items: center; } .item { margin: auto; } </style>
@@ -459,21 +459,9 @@
           var option = {
   "title": [
     {
-      "text": "BAR"
+      "text": "HEATMAP"
     }
   ],
-  "toolbox": {
-    "show": true,
-    "feature": {
-      "saveAsImage": {
-        "show": true
-      },
-      "dataView": {
-        "show": true
-      },
-      "dataZoom": {}
-    }
-  },
   "grid": [
     {
       "top": "10%",
@@ -488,36 +476,7 @@
         "fontSize": 15.0,
         "rotate": 30.0,
         "interval": 0.0
-      },
-      "data": [
-        "faveran",
-        "ararvy",
-        "irethi",
-        "ienevala",
-        "enarvyne",
-        "varam",
-        "dalamus",
-        "dren",
-        "irarvy",
-        "vedaves",
-        "kammus",
-        "seran",
-        "heloth",
-        "othren",
-        "gadaves",
-        "llaala",
-        "berendal",
-        "vandal",
-        "sendal",
-        "neldam",
-        "sarayn",
-        "llaalam",
-        "anasour",
-        "worker",
-        "maggot",
-        "uradasou",
-        "midaves"
-      ]
+      }
     }
   ],
   "yAxis": [
@@ -529,43 +488,273 @@
       }
     }
   ],
-  "dataZoom": [
+  "visualMap": [
     {
-      "endValue": 10.0
+      "min": 0.0,
+      "max": 10.0,
+      "calculable": true,
+      "orient": "horizontal",
+      "left": "center",
+      "bottom": "15%"
     }
   ],
   "series": [
     {
-      "type": "bar",
-      "showBackground": true,
+      "type": "heatmap",
+      "label": {
+        "show": true
+      },
       "data": [
-        96.0,
-        93.0,
-        90.0,
-        87.0,
-        83.0,
-        82.0,
-        80.0,
-        74.0,
-        70.0,
-        67.0,
-        53.0,
-        44.0,
-        42.0,
-        42.0,
-        42.0,
-        41.0,
-        41.0,
-        36.0,
-        33.0,
-        24.0,
-        22.0,
-        16.0,
-        14.0,
-        13.0,
-        5.0,
-        4.0,
-        2.0
+        [
+          "berendal",
+          "gidave",
+          86.0
+        ],
+        [
+          "enarvyne",
+          "ararvy",
+          3.0
+        ],
+        [
+          "gadaves",
+          "othralen",
+          37.0
+        ],
+        [
+          "vandal",
+          "maggot",
+          6.0
+        ],
+        [
+          "tadaves",
+          "vedaves",
+          57.0
+        ],
+        [
+          "seran",
+          "neldam",
+          4.0
+        ],
+        [
+          "maryon",
+          "seran",
+          44.0
+        ],
+        [
+          "gadaves",
+          "berendal",
+          48.0
+        ],
+        [
+          "enarvyne",
+          "heloth",
+          67.0
+        ],
+        [
+          "tadaves",
+          "maggot",
+          21.0
+        ],
+        [
+          "maggot",
+          "midaves",
+          20.0
+        ],
+        [
+          "othren",
+          "vedaves",
+          58.0
+        ],
+        [
+          "midaves",
+          "girothran",
+          44.0
+        ],
+        [
+          "maggot",
+          "vedaves",
+          70.0
+        ],
+        [
+          "midaves",
+          "berendal",
+          80.0
+        ],
+        [
+          "ararvy",
+          "gidave",
+          44.0
+        ],
+        [
+          "llaalam",
+          "varam",
+          74.0
+        ],
+        [
+          "vandal",
+          "llaalam",
+          39.0
+        ],
+        [
+          "tadaves",
+          "ienevala",
+          46.0
+        ],
+        [
+          "varam",
+          "tedril",
+          93.0
+        ],
+        [
+          "othralen",
+          "enarvyne",
+          24.0
+        ],
+        [
+          "llaala",
+          "llaala",
+          93.0
+        ],
+        [
+          "dren",
+          "gidave",
+          84.0
+        ],
+        [
+          "irethi",
+          "irarvy",
+          38.0
+        ],
+        [
+          "tadaves",
+          "midaves",
+          35.0
+        ],
+        [
+          "irethi",
+          "kammus",
+          78.0
+        ],
+        [
+          "berendal",
+          "sendal",
+          3.0
+        ],
+        [
+          "vandal",
+          "enarvyne",
+          59.0
+        ],
+        [
+          "anasour",
+          "vedaves",
+          6.0
+        ],
+        [
+          "llaalam",
+          "dren",
+          38.0
+        ],
+        [
+          "llaalam",
+          "heloth",
+          71.0
+        ],
+        [
+          "girothran",
+          "vandal",
+          44.0
+        ],
+        [
+          "gidave",
+          "irarvy",
+          97.0
+        ],
+        [
+          "alammu",
+          "tadaves",
+          43.0
+        ],
+        [
+          "heloth",
+          "faveran",
+          95.0
+        ],
+        [
+          "vandal",
+          "maggot",
+          41.0
+        ],
+        [
+          "tadaves",
+          "girothran",
+          42.0
+        ],
+        [
+          "neldam",
+          "seran",
+          76.0
+        ],
+        [
+          "vandal",
+          "dren",
+          48.0
+        ],
+        [
+          "berendal",
+          "maryon",
+          60.0
+        ],
+        [
+          "dalamus",
+          "berendal",
+          86.0
+        ],
+        [
+          "anasour",
+          "gidave",
+          68.0
+        ],
+        [
+          "dren",
+          "maryon",
+          14.0
+        ],
+        [
+          "irarvy",
+          "anasour",
+          71.0
+        ],
+        [
+          "gidave",
+          "maggot",
+          73.0
+        ],
+        [
+          "uradasou",
+          "vandal",
+          93.0
+        ],
+        [
+          "othren",
+          "kammus",
+          10.0
+        ],
+        [
+          "tedril",
+          "dalamus",
+          46.0
+        ],
+        [
+          "othren",
+          "othralen",
+          37.0
+        ],
+        [
+          "anasour",
+          "midaves",
+          99.0
+        ]
       ]
     }
   ]
