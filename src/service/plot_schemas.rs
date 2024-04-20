@@ -13,6 +13,6 @@ pub struct BarInput {
     pub plot: PlotInput,
 
     pub values: HashMap<String, f64>,
-    pub limit: Option<u32>,
+    pub limit: Option<usize>,
     pub asc: Option<bool>,
 }

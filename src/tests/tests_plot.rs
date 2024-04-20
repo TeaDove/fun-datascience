@@ -62,7 +62,7 @@ pub fn names() -> Vec<String> {
 #[rstest]
 pub fn test_plot_service_draw_bar_ok(combat_container: Container, names: Vec<String>) {
     let mut values: HashMap<String, f64> = HashMap::new();
-    for _ in 0..20 {
+    for _ in 0..30 {
         values.insert(
             names
                 .choose(&mut rand::thread_rng())

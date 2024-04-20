@@ -51,7 +51,11 @@ impl Service {
             values.sort_by(|left, right| f64::total_cmp(&right.1, &left.1));
         }
 
-
+        if let Some(limit) = bar.limit {
+            if limit < values.len() {
+                values = values[0..limit].to_vec();
+            }
+        }
 
         let ks: Vec<_> = values.iter().cloned().map(|(k, _)| k).collect();
         let vs: Vec<_> = values.iter().cloned().map(|(_, v)| v).collect();
