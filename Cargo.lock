@@ -439,6 +439,7 @@ name = "fun_datascience"
 version = "0.0.0"
 dependencies = [
  "plotly",
+ "rand",
  "rocket",
  "rstest",
  "serde",
@@ -1238,6 +1239,7 @@ dependencies = [
  "rocket_codegen",
  "rocket_http",
  "serde",
+ "serde_json",
  "state",
  "tempfile",
  "time",

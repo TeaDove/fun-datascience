@@ -8,9 +8,10 @@ name = "web"
 path = "src/entrypoint_web.rs"
 
 [dependencies]
-rocket = "0.5.0"
+rocket = { version = "0.5.0", features = ["json"] }
 plotly = "0.8.4"
 serde = { version = "1.0.198", features = ["derive"] }
 
 [dev-dependencies]
 rstest = "0.19.0"
+rand = "0.8.5"
