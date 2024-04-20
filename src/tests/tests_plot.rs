@@ -1,4 +1,4 @@
-use crate::service::plot_schemas::{BarInput, EdgeInput, GraphInput, PlotInput};
+use crate::service::plot_schemas::{BarInput, EdgeInput, GraphInput, NodeInput, PlotInput};
 use crate::shared::container::Container;
 use rand::seq::SliceRandom;
 use rand::Rng;
@@ -93,7 +93,7 @@ pub fn test_plot_service_draw_bar_ok(combat_container: Container, names: Vec<Str
 #[rstest]
 pub fn test_plot_service_draw_heatmap_ok(combat_container: Container, names: Vec<String>) {
     let mut values: Vec<EdgeInput> = Vec::new();
-    for _ in 0..50 {
+    for _ in 0..500 {
         values.push(EdgeInput {
             first: names
                 .choose(&mut rand::thread_rng())
@@ -118,9 +118,61 @@ pub fn test_plot_service_draw_heatmap_ok(combat_container: Container, names: Vec
                 y_title: Some("Y_TITLE".to_string()),
                 zoom_end_value: None,
             },
-            values,
+            edges: values,
+            nodes: HashMap::new(),
         })
         .unwrap();
 
     fs::write("draw_heatmap_ok.html", html).unwrap();
+}
+
+#[rstest]
+pub fn test_plot_service_draw_graph_ok(combat_container: Container, names: Vec<String>) {
+    let mut values: Vec<EdgeInput> = Vec::new();
+    let mut nodes: HashMap<String, NodeInput> = HashMap::new();
+    for _ in 0..500 {
+        let edge = EdgeInput {
+            first: names
+                .choose(&mut rand::thread_rng())
+                .unwrap()
+                .deref()
+                .to_string(),
+            second: names
+                .choose(&mut rand::thread_rng())
+                .unwrap()
+                .deref()
+                .to_string(),
+            weight: f64::from(rand::thread_rng().gen_range(0..100)),
+        };
+        values.push(edge.clone());
+
+        nodes.insert(
+            edge.first,
+            NodeInput {
+                weight: Some(f64::from(rand::thread_rng().gen_range(0..100))),
+            },
+        );
+        nodes.insert(
+            edge.second,
+            NodeInput {
+                weight: Some(f64::from(rand::thread_rng().gen_range(0..100))),
+            },
+        );
+    }
+
+    let html = combat_container
+        .plot_service
+        .draw_graph(GraphInput {
+            plot: PlotInput {
+                title: Some("GRAPH".to_string()),
+                x_title: Some("X_TITLE".to_string()),
+                y_title: Some("Y_TITLE".to_string()),
+                zoom_end_value: None,
+            },
+            edges: values,
+            nodes: nodes,
+        })
+        .unwrap();
+
+    fs::write("draw_graph_ok.html", html).unwrap();
 }

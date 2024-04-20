@@ -1,15 +1,21 @@
-use crate::service::plot_schemas::{BarInput, GraphInput, LineInput, PlotInput};
+use crate::service::plot_schemas::{BarInput, EdgeInput, GraphInput, PlotInput};
 use charming;
 use charming::component::{
-    DataView, DataZoom, Feature, Grid, Legend, MagicType, Restore, SaveAsImage, Title, Toolbox,
-    ToolboxDataZoom, VisualMap,
+    DataView, DataZoom, Feature, Grid, SaveAsImage, Title, Toolbox, ToolboxDataZoom, VisualMap,
 };
 use charming::datatype::{CompositeValue, DataFrame};
-use charming::element::{AxisLabel, Emphasis, EmphasisFocus, ItemStyle, Label, Orient};
+use charming::element::{
+    AxisLabel, Emphasis, ItemStyle, Label, LabelLayout, LabelPosition, LineStyle, Orient,
+    ScaleLimit,
+};
+use charming::series::{GraphData, GraphLayout, GraphLink, GraphNode};
 use charming::theme::Theme;
 use charming::{
-    component::Axis, df, element::AxisType, series::Bar, series::Heatmap, Chart, HtmlRenderer,
+    component::Axis, df, element::AxisType, series::Bar, series::Graph, series::Heatmap, Chart,
+    HtmlRenderer,
 };
+use rand::Rng;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Clone)]
 pub struct Service {}
@@ -20,20 +26,23 @@ impl Service {
     }
 
     fn make_chart(plot: PlotInput) -> (Chart, Axis, Axis) {
-        let toolbox = Toolbox::new().show(true).feature(
-            Feature::new()
-                .data_view(DataView::new().show(true))
-                .save_as_image(SaveAsImage::new().show(true))
-                .data_zoom(ToolboxDataZoom::new()),
-        );
+        let mut feature = Feature::new()
+            .data_view(DataView::new().show(true))
+            .save_as_image(SaveAsImage::new().show(true));
+        // let toolbox = Toolbox::new().show(true).feature(
+        //     Feature::new()
+        //         .data_view(DataView::new().show(true))
+        //         .save_as_image(SaveAsImage::new().show(true))
+        // );
 
         let mut chart = charming::Chart::new().grid(Grid::new().height("50%").top("10%"));
 
         if let Some(v) = plot.zoom_end_value {
-            chart = chart
-                .data_zoom(DataZoom::new().end_value(f64::from(v)))
-                .toolbox(toolbox);
+            feature = feature.data_zoom(ToolboxDataZoom::new());
+            chart = chart.data_zoom(DataZoom::new().end_value(f64::from(v)));
         }
+
+        chart = chart.toolbox(Toolbox::new().show(true).feature(feature));
 
         if let Some(v) = plot.title {
             chart = chart.title(Title::new().text(v));
@@ -47,7 +56,15 @@ impl Service {
     }
 
     fn axis_from_title(title: Option<String>) -> Axis {
-        let mut axis = Axis::new().axis_label(AxisLabel::new().font_size(25.0));
+        let mut axis = Axis::new()
+            .axis_label(
+                AxisLabel::new()
+                    .font_size(25.0)
+                    .rotate(30)
+                    .interval(0)
+                    .font_size(15),
+            )
+            .boundary_gap(true);
 
         if let Some(v) = title {
             axis = axis.name(v);
@@ -58,8 +75,8 @@ impl Service {
 
     fn export_to_html(&self, chart: &Chart, plot_input: PlotInput) -> Result<String, String> {
         let renderer =
-            HtmlRenderer::new(plot_input.title.unwrap_or("Chart".to_string()), 1200, 800)
-                .theme(Theme::Roma);
+            HtmlRenderer::new(plot_input.title.unwrap_or("Chart".to_string()), 1980, 1080)
+                .theme(Theme::Default);
 
         match renderer.render(&chart) {
             Ok(v) => Ok(v),
@@ -103,11 +120,47 @@ impl Service {
     //     self.export_to_html(&chart, input.plot)
     // }
 
-    pub fn draw_heatmap(&self, input: GraphInput) -> Result<String, String> {
+    pub fn sum_duplicates(input: Vec<EdgeInput>) -> Vec<EdgeInput> {
+        let mut newvec: Vec<EdgeInput> = vec![];
+        let mut edge_to_weight: HashMap<(String, String), f64> = HashMap::new();
+
+        for edge in input.into_iter() {
+            let key = (edge.first, edge.second);
+
+            if let Some(v) = edge_to_weight.get(&key.clone()) {
+                edge_to_weight.insert(key.clone(), edge.weight + v);
+
+                continue;
+            }
+
+            edge_to_weight.insert(key, edge.weight);
+        }
+
+        for (k, v) in edge_to_weight.into_iter() {
+            newvec.push(EdgeInput {
+                first: k.0,
+                second: k.1,
+                weight: v,
+            });
+        }
+
+        newvec
+    }
+    pub fn draw_heatmap(&self, mut input: GraphInput) -> Result<String, String> {
         let (mut chart, x_axis, y_axis) = Service::make_chart(input.plot.clone());
 
+        input.edges = Self::sum_duplicates(input.edges);
+
+        let mut edges_set = HashSet::new();
+        for v in input.edges.clone().into_iter() {
+            edges_set.insert(v.first);
+            edges_set.insert(v.second);
+        }
+
+        let axis_data: Vec<String> = edges_set.into_iter().collect();
+
         let data: Vec<DataFrame> = input
-            .values
+            .edges
             .into_iter()
             .map(|d| {
                 df![
@@ -123,22 +176,90 @@ impl Service {
             .collect();
 
         chart = chart
-            .series(Heatmap::new().label(Label::new().show(true)).data(data))
+            .series(
+                Heatmap::new()
+                    .label(Label::new().show(true))
+                    .data(data)
+                    .emphasis(
+                        Emphasis::new().item_style(
+                            ItemStyle::new()
+                                .color("rgba(0, 0, 0, 0.5)")
+                                .shadow_blur(10)
+                                .shadow_color("rgba(0, 0, 0, 0.5)"),
+                        ),
+                    ),
+            )
             .visual_map(
                 VisualMap::new()
-                    .min(0)
-                    .max(10)
                     .calculable(true)
-                    .orient(Orient::Horizontal)
-                    .left("center")
-                    .bottom("15%"),
+                    .orient(Orient::Vertical)
+                    .bottom("center")
+                    .right("right"),
             )
             .x_axis(
                 x_axis
                     .boundary_gap(true)
-                    .axis_label(AxisLabel::new().rotate(30).interval(0).font_size(15)),
+                    .data(axis_data.clone())
+                    .type_(AxisType::Category),
             )
-            .y_axis(y_axis.type_(AxisType::Value));
+            .y_axis(
+                y_axis
+                    .type_(AxisType::Category)
+                    .data(axis_data)
+                    .boundary_gap(true),
+            );
+
+        self.export_to_html(&chart, input.plot)
+    }
+
+    pub fn draw_graph(&self, mut input: GraphInput) -> Result<String, String> {
+        let (mut chart, x_axis, y_axis) = Service::make_chart(input.plot.clone());
+
+        input.edges = Self::sum_duplicates(input.edges);
+
+        let mut data: GraphData = GraphData {
+            nodes: vec![],
+            links: vec![],
+            categories: vec![],
+        };
+
+        for v in input.edges {
+            data.links.push(GraphLink {
+                source: v.first,
+                target: v.second,
+                value: Some(v.weight),
+            })
+        }
+
+        for (k, v) in input.nodes {
+            data.nodes.push(GraphNode {
+                id: k.clone(),
+                name: k,
+                x: f64::from(rand::thread_rng().gen_range(0..150)),
+                y: f64::from(rand::thread_rng().gen_range(0..150)),
+                value: v.weight.unwrap_or(1.0),
+                category: 0,
+                symbol_size: 0.0,
+                label: None,
+            })
+        }
+
+        chart = chart.series(
+            Graph::new()
+                .name("Les Miserables")
+                .layout(GraphLayout::Force)
+                .roam(false)
+                .label(
+                    Label::new()
+                        .show(true)
+                        .position(LabelPosition::Right)
+                        .formatter("{b}"),
+                )
+                // .label_layout(LabelLayout::new().hide_overlap(true))
+                // .scale_limit(ScaleLimit::new().min(0.4).max(10.0))
+                .line_style(LineStyle::new().color("source").curveness(0.3))
+                .data(data),
+        );
 
         self.export_to_html(&chart, input.plot)
     }

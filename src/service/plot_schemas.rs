@@ -32,9 +32,15 @@ pub struct EdgeInput {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct NodeInput {
+    pub weight: Option<f64>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct GraphInput {
     #[serde(flatten)]
     pub plot: PlotInput,
 
-    pub values: Vec<EdgeInput>,
+    pub edges: Vec<EdgeInput>,
+    pub nodes: HashMap<String, NodeInput>,
 }
