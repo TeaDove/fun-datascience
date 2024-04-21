@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>BAR</title>
+    <title>LINEPLOT</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts-gl@2.0.9/dist/echarts-gl.min.js"></script>
     <style> .container { display: flex; justify-content: center; align-items: center; } .item { margin: auto; } </style>
@@ -18,7 +18,7 @@
           var option = {
   "title": [
     {
-      "text": "BAR"
+      "text": "LINEPLOT"
     }
   ],
   "tooltip": {
@@ -33,8 +33,7 @@
       },
       "dataView": {
         "show": true
-      },
-      "dataZoom": {}
+      }
     }
   },
   "grid": [
@@ -51,43 +50,11 @@
         "fontSize": 15.0,
         "rotate": 30.0,
         "interval": 0.0
-      },
-      "data": [
-        "berendal",
-        "maggot",
-        "worker",
-        "girothran",
-        "irarvy",
-        "llaalam",
-        "gidave",
-        "seran",
-        "neldammu",
-        "tadaves",
-        "vandal",
-        "irethi",
-        "kammus",
-        "varam",
-        "llaala",
-        "dren",
-        "othren",
-        "faveran",
-        "ararvy",
-        "anasour",
-        "maryon",
-        "uradasou",
-        "alammu",
-        "gadaves",
-        "sarayn",
-        "deras",
-        "enarvyne",
-        "vedaves",
-        "ienevala"
-      ]
+      }
     }
   ],
   "yAxis": [
     {
-      "type": "value",
       "name": "Y_TITLE",
       "boundaryGap": true,
       "axisLabel": {
@@ -95,48 +62,6 @@
         "rotate": 30.0,
         "interval": 0.0
       }
-    }
-  ],
-  "dataZoom": [
-    {
-      "endValue": 10.0
-    }
-  ],
-  "series": [
-    {
-      "type": "bar",
-      "showBackground": true,
-      "data": [
-        78.0,
-        73.0,
-        73.0,
-        72.0,
-        65.0,
-        61.0,
-        50.0,
-        49.0,
-        46.0,
-        44.0,
-        43.0,
-        40.0,
-        39.0,
-        34.0,
-        34.0,
-        33.0,
-        32.0,
-        31.0,
-        27.0,
-        25.0,
-        20.0,
-        18.0,
-        17.0,
-        15.0,
-        14.0,
-        9.0,
-        9.0,
-        8.0,
-        6.0
-      ]
     }
   ]
 };

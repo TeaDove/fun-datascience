@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use charming::datatype::CompositeValue;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PlotInput {
@@ -22,7 +23,7 @@ pub struct LineInput {
     #[serde(flatten)]
     pub plot: PlotInput,
 
-    pub values: Vec<(String, String, f64)>,
+    pub values: Vec<(String, CompositeValue, CompositeValue)>,
 }
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct EdgeInput {

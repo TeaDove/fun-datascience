@@ -1,14 +1,12 @@
-use crate::service::plot_schemas::{BarInput, EdgeInput, GraphInput, PlotInput};
+use std::cmp::Ordering;
+use crate::service::plot_schemas::{BarInput, EdgeInput, GraphInput, LineInput, PlotInput};
 use charming;
 use charming::component::{
     DataView, DataZoom, Feature, Grid, SaveAsImage, Title, Toolbox, ToolboxDataZoom, VisualMap,
 };
-use charming::datatype::{CompositeValue, DataFrame};
-use charming::element::{
-    AxisLabel, Emphasis, ItemStyle, Label, LabelLayout, LabelPosition, LineStyle, Orient,
-    ScaleLimit,
-};
-use charming::series::{GraphData, GraphLayout, GraphLink, GraphNode};
+use charming::datatype::{CompositeValue, DataFrame, Dataset};
+use charming::element::{AxisLabel, AxisPointer, DimensionEncode, Emphasis, ItemStyle, Label, LabelLayout, LabelPosition, LineStyle, Orient, ScaleLimit, Tooltip, Trigger};
+use charming::series::{GraphData, GraphLayout, GraphLink, GraphNode, Line};
 use charming::theme::Theme;
 use charming::{
     component::Axis, df, element::AxisType, series::Bar, series::Graph, series::Heatmap, Chart,
@@ -29,11 +27,6 @@ impl Service {
         let mut feature = Feature::new()
             .data_view(DataView::new().show(true))
             .save_as_image(SaveAsImage::new().show(true));
-        // let toolbox = Toolbox::new().show(true).feature(
-        //     Feature::new()
-        //         .data_view(DataView::new().show(true))
-        //         .save_as_image(SaveAsImage::new().show(true))
-        // );
 
         let mut chart = charming::Chart::new().grid(Grid::new().height("50%").top("10%"));
 
@@ -42,7 +35,15 @@ impl Service {
             chart = chart.data_zoom(DataZoom::new().end_value(f64::from(v)));
         }
 
-        chart = chart.toolbox(Toolbox::new().show(true).feature(feature));
+        chart = chart.toolbox(
+            Toolbox::new().
+                show(true).
+                feature(feature)
+        ).tooltip(
+            Tooltip::new().
+                trigger(Trigger::Axis).
+                axis_pointer(AxisPointer::new())
+        );
 
         if let Some(v) = plot.title {
             chart = chart.title(Title::new().text(v));
@@ -112,13 +113,50 @@ impl Service {
         self.export_to_html(&chart, input.plot)
     }
 
-    // pub fn draw_linechart(&self, input: LineInput) -> Result<String, String> {
-    //     let (mut chart, mut x_axis, mut y_axis) = Service::make_chart(input.plot.clone());
-    //
-    //
-    //
-    //     self.export_to_html(&chart, input.plot)
-    // }
+    fn sort_linechart(values: Vec<(String, CompositeValue, CompositeValue)>) -> HashMap<String, Vec<(CompositeValue, CompositeValue)>>{
+        let mut map: HashMap<String, Vec<(CompositeValue, CompositeValue)>> = HashMap::new();
+        // for (legend, x, y) in values{
+        //     if let  Some(mut v) = map.get(&legend){
+        //         v.push((x, y));
+        //     }
+        //
+        //     map.insert(legend, vec!((x, y)));
+        // }
+
+        let mut res = HashMap::new();
+
+        for (legend, mut items) in map{
+            items.sort_by(|x, y| if x.0 > y.0 {Ordering::Greater} else {Ordering::Less})
+        }
+
+        res
+    }
+
+    pub fn draw_linechart(&self, input: LineInput) -> Result<String, String> {
+        let (mut chart, mut x_axis, mut y_axis) = Service::make_chart(input.plot.clone());
+
+        let series = Self::sort_linechart(input.values);
+
+        // let mut vec_vec :Vec<Vec<CompositeValue>> = vec!(vec!(
+        //     CompositeValue::String("legend".to_string()),
+        //     CompositeValue::String("x".to_string()),
+        //     CompositeValue::String("y".to_string())
+        // ));
+        //
+        // for (legend, x, y) in input.values{
+        //     vec_vec.push(vec!(legend, x, y));
+        // }
+
+        chart = chart.
+            x_axis(x_axis).
+            y_axis(y_axis);
+
+        // for (name, data) in series{
+        //     chart = chart.series(Line::new().data(data).name(name))
+        // }
+
+        self.export_to_html(&chart, input.plot)
+    }
 
     pub fn sum_duplicates(input: Vec<EdgeInput>) -> Vec<EdgeInput> {
         let mut newvec: Vec<EdgeInput> = vec![];
@@ -239,7 +277,7 @@ impl Service {
                 y: f64::from(rand::thread_rng().gen_range(0..150)),
                 value: v.weight.unwrap_or(1.0),
                 category: 0,
-                symbol_size: 0.0,
+                symbol_size: v.weight.unwrap_or(1.0),
                 label: None,
             })
         }
