@@ -12,7 +12,7 @@ use charming::{
     component::Axis, df, element::AxisType, series::Bar, series::Graph, series::Heatmap, Chart,
     HtmlRenderer,
 };
-use rand::Rng;
+// use rand::Rng;
 use std::collections::{HashMap, HashSet};
 
 #[derive(Clone)]
@@ -113,19 +113,21 @@ impl Service {
         self.export_to_html(&chart, input.plot)
     }
 
-    fn sort_linechart(values: Vec<(String, CompositeValue, CompositeValue)>) -> HashMap<String, Vec<(CompositeValue, CompositeValue)>>{
+    fn sort_linechart(values: Vec<(String, CompositeValue, CompositeValue)>) -> HashMap<String, Vec<(CompositeValue)>>{
         let mut map: HashMap<String, Vec<(CompositeValue, CompositeValue)>> = HashMap::new();
-        // for (legend, x, y) in values{
-        //     if let  Some(mut v) = map.get(&legend){
-        //         v.push((x, y));
-        //     }
-        //
-        //     map.insert(legend, vec!((x, y)));
-        // }
+        for (legend, x, y) in values{
+            if let  Some(mut v) = map.get_mut(&legend){
+                v.push((x, y));
+
+                continue
+            }
+
+            map.insert(legend, vec!((x, y)));
+        }
 
         let mut res = HashMap::new();
 
-        for (legend, mut items) in map{
+        for (_, mut items) in map{
             items.sort_by(|x, y| if x.0 > y.0 {Ordering::Greater} else {Ordering::Less})
         }
 
@@ -151,9 +153,9 @@ impl Service {
             x_axis(x_axis).
             y_axis(y_axis);
 
-        // for (name, data) in series{
-        //     chart = chart.series(Line::new().data(data).name(name))
-        // }
+        for (name, data) in series{
+            // chart = chart.series(Line::new().data(data).name(name))
+        }
 
         self.export_to_html(&chart, input.plot)
     }
@@ -273,8 +275,10 @@ impl Service {
             data.nodes.push(GraphNode {
                 id: k.clone(),
                 name: k,
-                x: f64::from(rand::thread_rng().gen_range(0..150)),
-                y: f64::from(rand::thread_rng().gen_range(0..150)),
+                x: 0.0,
+                y: 0.0,
+                // x: f64::from(rand::thread_rng().gen_range(0..150)),
+                // y: f64::from(rand::thread_rng().gen_range(0..150)),
                 value: v.weight.unwrap_or(1.0),
                 category: 0,
                 symbol_size: v.weight.unwrap_or(1.0),
