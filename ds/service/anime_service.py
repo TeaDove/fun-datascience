@@ -8,6 +8,10 @@ from loguru import logger
 from PIL import Image
 
 
+class NotAnImage(Exception):
+    ...
+
+
 class AnimeService:
     __transformations = T.Compose([T.ToTensor(), T.Normalize((0, 0, 0), (1, 1, 1))])
 
@@ -29,8 +33,10 @@ class AnimeService:
         """
         img_path is path of image, lol
         """
-        # return 1 # раскомментить, если Петер будет плохо себя вести.
-        img = Image.open(io.BytesIO(img_bytes))
+        try:
+            img = Image.open(io.BytesIO(img_bytes))
+        except Exception as exc:
+            raise NotAnImage("passed image is not and image") from exc
         img = img.convert("RGB")
         if img.size != (224, 224):
             img = img.resize((224, 224))
