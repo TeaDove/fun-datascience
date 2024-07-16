@@ -20,4 +20,4 @@ services:
         limits:
           cpus: '0.75'
           memory: 1800M
-    image: ghcr.io/teadove/fun-datascience:v2.0.3
+    image: ghcr.io/teadove/fun-datascience:v2.1.0
