@@ -14,7 +14,7 @@ if __name__ == "__main__":
     )
 
     uvicorn.run(
-        "main:uvicorn_app",
+        uvicorn_app,
         host=app_settings.uvicorn.host,
         port=app_settings.uvicorn.port,
         workers=app_settings.uvicorn.workers,

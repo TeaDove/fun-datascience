@@ -20,7 +20,7 @@ class AnimeService:
         model_path - location of model
         """
         self.__device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.__model = models.resnet50(weights=True)
+        self.__model = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
         self.__model.fc = nn.Sequential(nn.Linear(2048, 1, bias=True), nn.Sigmoid())
         self.__model.load_state_dict(
             torch.load(weights_files, map_location=self.__device)
