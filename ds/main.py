@@ -2,7 +2,6 @@ from logging import _nameToLevel
 
 import uvicorn
 from loguru import logger
-from presentation.app import app as uvicorn_app
 from shared.settings import app_settings
 
 if __name__ == "__main__":

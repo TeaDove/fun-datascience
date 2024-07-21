@@ -8,8 +8,7 @@ from loguru import logger
 from PIL import Image
 
 
-class NotAnImage(Exception):
-    ...
+class NotAnImage(Exception): ...
 
 
 class AnimeService:

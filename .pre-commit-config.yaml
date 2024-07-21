@@ -35,6 +35,7 @@ repos:
         types_or: [ python, pyi, jupyter ]
       - id: ruff-format
         types_or: [ python, pyi, jupyter ]
+
   - repo: https://github.com/doublify/pre-commit-rust
     rev: v1.0
     hooks:
