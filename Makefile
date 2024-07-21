@@ -6,6 +6,9 @@ DOCKER_IMAGE ?= ghcr.io/teadove/fun-datascience:$(BUILD_VERSION)
 run:
 	cargo run
 
+test:
+	cargo test
+
 docker-login:
 	docker login ghcr.io
 

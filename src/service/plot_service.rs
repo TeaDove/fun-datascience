@@ -3,19 +3,18 @@ use charming;
 use charming::component::{
     DataView, DataZoom, Feature, Grid, SaveAsImage, Title, Toolbox, ToolboxDataZoom, VisualMap,
 };
-use charming::datatype::{CompositeValue, DataFrame, Dataset};
+use charming::datatype::{CompositeValue, DataFrame};
 use charming::element::{
-    AxisLabel, AxisPointer, DimensionEncode, Emphasis, ItemStyle, Label, LabelLayout,
-    LabelPosition, LineStyle, Orient, ScaleLimit, Tooltip, Trigger,
+    AxisLabel, AxisPointer, Emphasis, ItemStyle, Label, LabelPosition, LineStyle, Orient, Tooltip,
+    Trigger,
 };
-use charming::series::{GraphData, GraphLayout, GraphLink, GraphNode, Line};
+use charming::series::{GraphData, GraphLayout, GraphLink, GraphNode};
 use charming::theme::Theme;
 use charming::{
     component::Axis, df, element::AxisType, series::Bar, series::Graph, series::Heatmap, Chart,
     HtmlRenderer,
 };
 use std::cmp::Ordering;
-// use rand::Rng;
 use std::collections::{HashMap, HashSet};
 
 #[derive(Clone, Debug)]
@@ -116,7 +115,7 @@ impl Service {
 
     fn sort_linechart(
         values: Vec<(String, CompositeValue, CompositeValue)>,
-    ) -> HashMap<String, Vec<(CompositeValue)>> {
+    ) -> HashMap<String, Vec<CompositeValue>> {
         let mut map: HashMap<String, Vec<(CompositeValue, CompositeValue)>> = HashMap::new();
         for (legend, x, y) in values {
             if let Some(mut v) = map.get_mut(&legend) {
@@ -128,7 +127,7 @@ impl Service {
             map.insert(legend, vec![(x, y)]);
         }
 
-        let mut res = HashMap::new();
+        let res = HashMap::new();
 
         for (_, mut items) in map {
             items.sort_by(|x, y| {
@@ -144,7 +143,7 @@ impl Service {
     }
 
     pub fn draw_linechart(&self, input: LineInput) -> Result<String, String> {
-        let (mut chart, mut x_axis, mut y_axis) = Service::make_chart(input.plot.clone());
+        let (mut chart, x_axis, y_axis) = Service::make_chart(input.plot.clone());
 
         let series = Self::sort_linechart(input.values);
 
@@ -260,7 +259,7 @@ impl Service {
     }
 
     pub fn draw_graph(&self, mut input: GraphInput) -> Result<String, String> {
-        let (mut chart, x_axis, y_axis) = Service::make_chart(input.plot.clone());
+        let (mut chart, _, _) = Service::make_chart(input.plot.clone());
 
         input.edges = Self::sum_duplicates(input.edges);
 
