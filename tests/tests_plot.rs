@@ -1,12 +1,14 @@
-use crate::service::plot_schemas::{BarInput, EdgeInput, GraphInput, LineInput, NodeInput, PlotInput};
-use crate::shared::container::Container;
+use charming::datatype::CompositeValue;
+use fun_datascience::service::plot_schemas::{
+    BarInput, EdgeInput, GraphInput, LineInput, NodeInput, PlotInput,
+};
+use fun_datascience::shared::container::Container;
 use rand::seq::SliceRandom;
 use rand::Rng;
 use rstest::{fixture, rstest};
 use std::collections::HashMap;
 use std::fs;
 use std::ops::Deref;
-use charming::datatype::CompositeValue;
 
 #[fixture]
 pub fn combat_container() -> Container {
@@ -127,10 +129,9 @@ pub fn test_plot_service_draw_heatmap_ok(combat_container: Container, names: Vec
     fs::write("draw_heatmap_ok.html", html).unwrap();
 }
 
-
 #[rstest]
 pub fn test_plot_service_draw_lineplot_ok(combat_container: Container, names: Vec<String>) {
-    let mut values: Vec<(String,CompositeValue,CompositeValue)> = Vec::new();
+    let mut values: Vec<(String, CompositeValue, CompositeValue)> = Vec::new();
     for _ in 0..100 {
         values.push((
             names
@@ -139,7 +140,7 @@ pub fn test_plot_service_draw_lineplot_ok(combat_container: Container, names: Ve
                 .deref()
                 .to_string(),
             CompositeValue::from(rand::thread_rng().gen_range(0..100)),
-            CompositeValue::from(rand::thread_rng().gen_range(0..100))
+            CompositeValue::from(rand::thread_rng().gen_range(0..100)),
         ));
     }
 
@@ -152,7 +153,7 @@ pub fn test_plot_service_draw_lineplot_ok(combat_container: Container, names: Ve
                 y_title: Some("Y_TITLE".to_string()),
                 zoom_end_value: None,
             },
-            values
+            values,
         })
         .unwrap();
 

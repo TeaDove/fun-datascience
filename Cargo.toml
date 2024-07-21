@@ -1,6 +1,6 @@
 [package]
 name = "fun_datascience"
-version = "0.0.0"
+version = "0.1.0"
 edition = "2021"
 
 [[bin]]
@@ -11,6 +11,7 @@ path = "src/entrypoint_web.rs"
 rocket = { version = "0.5.0", features = ["json"] }
 serde = { version = "1.0.198", features = ["derive"] }
 charming = "0.3.1"
+tch = "0.16.0"
 
 [dev-dependencies]
 rstest = "0.19.0"

@@ -1,21 +1,24 @@
-use std::cmp::Ordering;
 use crate::service::plot_schemas::{BarInput, EdgeInput, GraphInput, LineInput, PlotInput};
 use charming;
 use charming::component::{
     DataView, DataZoom, Feature, Grid, SaveAsImage, Title, Toolbox, ToolboxDataZoom, VisualMap,
 };
 use charming::datatype::{CompositeValue, DataFrame, Dataset};
-use charming::element::{AxisLabel, AxisPointer, DimensionEncode, Emphasis, ItemStyle, Label, LabelLayout, LabelPosition, LineStyle, Orient, ScaleLimit, Tooltip, Trigger};
+use charming::element::{
+    AxisLabel, AxisPointer, DimensionEncode, Emphasis, ItemStyle, Label, LabelLayout,
+    LabelPosition, LineStyle, Orient, ScaleLimit, Tooltip, Trigger,
+};
 use charming::series::{GraphData, GraphLayout, GraphLink, GraphNode, Line};
 use charming::theme::Theme;
 use charming::{
     component::Axis, df, element::AxisType, series::Bar, series::Graph, series::Heatmap, Chart,
     HtmlRenderer,
 };
+use std::cmp::Ordering;
 // use rand::Rng;
 use std::collections::{HashMap, HashSet};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Service {}
 
 impl Service {
@@ -35,15 +38,13 @@ impl Service {
             chart = chart.data_zoom(DataZoom::new().end_value(f64::from(v)));
         }
 
-        chart = chart.toolbox(
-            Toolbox::new().
-                show(true).
-                feature(feature)
-        ).tooltip(
-            Tooltip::new().
-                trigger(Trigger::Axis).
-                axis_pointer(AxisPointer::new())
-        );
+        chart = chart
+            .toolbox(Toolbox::new().show(true).feature(feature))
+            .tooltip(
+                Tooltip::new()
+                    .trigger(Trigger::Axis)
+                    .axis_pointer(AxisPointer::new()),
+            );
 
         if let Some(v) = plot.title {
             chart = chart.title(Title::new().text(v));
@@ -113,22 +114,30 @@ impl Service {
         self.export_to_html(&chart, input.plot)
     }
 
-    fn sort_linechart(values: Vec<(String, CompositeValue, CompositeValue)>) -> HashMap<String, Vec<(CompositeValue)>>{
+    fn sort_linechart(
+        values: Vec<(String, CompositeValue, CompositeValue)>,
+    ) -> HashMap<String, Vec<(CompositeValue)>> {
         let mut map: HashMap<String, Vec<(CompositeValue, CompositeValue)>> = HashMap::new();
-        for (legend, x, y) in values{
-            if let  Some(mut v) = map.get_mut(&legend){
+        for (legend, x, y) in values {
+            if let Some(mut v) = map.get_mut(&legend) {
                 v.push((x, y));
 
-                continue
+                continue;
             }
 
-            map.insert(legend, vec!((x, y)));
+            map.insert(legend, vec![(x, y)]);
         }
 
         let mut res = HashMap::new();
 
-        for (_, mut items) in map{
-            items.sort_by(|x, y| if x.0 > y.0 {Ordering::Greater} else {Ordering::Less})
+        for (_, mut items) in map {
+            items.sort_by(|x, y| {
+                if x.0 > y.0 {
+                    Ordering::Greater
+                } else {
+                    Ordering::Less
+                }
+            })
         }
 
         res
@@ -149,11 +158,9 @@ impl Service {
         //     vec_vec.push(vec!(legend, x, y));
         // }
 
-        chart = chart.
-            x_axis(x_axis).
-            y_axis(y_axis);
+        chart = chart.x_axis(x_axis).y_axis(y_axis);
 
-        for (name, data) in series{
+        for (name, data) in series {
             // chart = chart.series(Line::new().data(data).name(name))
         }
 

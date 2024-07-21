@@ -1,6 +1,6 @@
+use charming::datatype::CompositeValue;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use charming::datatype::CompositeValue;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PlotInput {
